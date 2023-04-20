@@ -72,6 +72,40 @@
 | weishi         | 微视           |
 | qcloud         | 腾讯云         |
 
+## 获取clientkey接口
+
+请求URL：
+
+> /api.php?act=getclientkey
+
+请求方式：POST
+
+请求参数：
+
+| 参数名 | 必填 | 类型   | 描述                 |
+| ------ | ---- | ------ | -------------------- |
+| key    | 是   | string | 获取COOKIE密钥       |
+| uin    | 否   | string | 指定QQ（留空为随机） |
+
+返回示例：
+
+```
+{
+    "code":0,
+    "uin":"123456",
+    "clientkey":"ABCDEF....."
+}
+```
+
+返回参数说明：
+
+| 参数名    | 类型   | 描述                 |
+| --------- | ------ | -------------------- |
+| code      | int    | 0 是成功，其他是失败 |
+| msg       | string | 失败原因             |
+| uin       | string | QQ号码               |
+| clientkey | string | clientkey内容        |
+
 ## 获取空间说说列表
 
 请求URL：
