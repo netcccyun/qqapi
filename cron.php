@@ -44,6 +44,7 @@ foreach($opentype as $type){
                 echo "[Error] {$uin}|{$type} 添加COOKIE失败,{$e->getMessage()}\n";
             }
         }
+        sleep(1);
     }
 }
 
