@@ -409,3 +409,12 @@ function getLoginTypeName($type){
 		return '';
 	}
 }
+
+function get_qqnick($uin){
+    if($data=get_curl("https://h5.qzone.qq.com/proxy/domain/r.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?get_nick=1&uins=".$uin)){
+		$data=str_replace(array('portraitCallBack(',')'),array('',''),$data);
+		$data=mb_convert_encoding($data, "UTF-8", "GBK");
+		$row=json_decode($data,true);;
+		return $row[$uin][6];
+	}
+}

@@ -50,6 +50,18 @@ $opentype = explode(',', $conf['opentype']);
 <div class="panel-body">
   <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
 	<div class="form-group">
+	  <label class="col-sm-3 control-label">登录服务器IP</label>
+	  <div class="col-sm-9"><input type="text" name="server_ip" value="<?php echo $conf['server_ip']; ?>" class="form-control"/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">登录服务器端口</label>
+	  <div class="col-sm-9"><input type="text" name="server_port" value="<?php echo $conf['server_port']; ?>" class="form-control"/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">登录服务器密钥</label>
+	  <div class="col-sm-9"><input type="text" name="server_key" value="<?php echo $conf['server_key']; ?>" class="form-control"/></div>
+	</div><hr/>
+	<div class="form-group">
 	  <label class="col-sm-3 control-label">API接口密钥</label>
 	  <div class="col-sm-9"><div class="input-group"><input type="text" name="apikey" value="<?php echo $conf['apikey']; ?>" class="form-control" required/><span class="input-group-btn"><a href="javascript:generateKey('apikey');" title="重新生成" class="btn btn-default"><i class="fa fa-refresh"></i></a></span></div></div>
 	</div><br/>
@@ -68,7 +80,7 @@ $opentype = explode(',', $conf['opentype']);
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">调用方IP地址获取方式</label>
 	  <div class="col-sm-9"><select class="form-control" name="ip_type" default="<?php echo $conf['ip_type']?>"><option value="0">REMOTE_ADDR</option><option value="1">X_REAL_IP</option></select></div>
-	</div><br/>
+	</div><hr/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">查询缓存时长</label>
 	  <div class="col-sm-9"><div class="input-group"><input type="text" name="cache_time" value="<?php echo $conf['cache_time']; ?>" class="form-control" placeholder="0或留空为不缓存"/><span class="input-group-addon">秒</span></div><font color="green">设置查询缓存之后，可以降低请求腾讯接口的频率</font></div>

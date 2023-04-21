@@ -131,7 +131,7 @@ function addqq(){
 				$("#modal-store").modal('show');
 				$("#uin").empty();
 				$.each(data.data, function (i, res) {
-					$("#uin").append('<option value="'+res.uin+'">'+res.nickname+'（'+res.uin+'）</option>');
+					$("#uin").append('<option value="'+res+'">'+res+'</option>');
 				})
 			}else{
 				layer.alert(data.msg, {icon: 2})

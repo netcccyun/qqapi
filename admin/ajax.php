@@ -42,18 +42,8 @@ case 'addAccount':
 		exit('{"code":-1,"msg":"该QQ已经添加过了"}');
 	}
 	$login = new \lib\QQLogin();
-	$list = $login->uinList();
-	if(!$list)exit('{"code":-1,"msg":"未获取到已登录的QQ列表"}');
-	$flag = false;
-	foreach($list as $row){
-		if($row['uin'] == $uin){
-			$nickname = $row['nickname'];
-			$flag = true;
-			break;
-		}
-	}
-	if(!$flag)exit('{"code":-1,"msg":"该QQ未在当前PC登录"}');
 	if($login->checkLogin($uin)){
+		$nickname = get_qqnick($uin);
 		$aid = $DB->insert('account', ['uin'=>$uin, 'nickname'=>$nickname, 'addtime'=>'NOW()', 'status'=>'1']);
 		$DB->insert('log', ['uin'=>$row['uin'], 'type'=>'default', 'action'=>'添加账号', 'time'=>'NOW()']);
 		exit(json_encode(['code'=>0, 'aid'=>$aid]));

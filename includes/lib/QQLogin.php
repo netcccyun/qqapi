@@ -11,31 +11,26 @@ class QQLogin
     //已登录的QQ列表
     public function uinList()
     {
-        $pt_local_tk = random(9, 1);
-        $url = 'https://localhost.ptlogin2.qq.com:4301/pt_get_uins?callback=ptui_getuins_CB&pt_local_tk=' . $pt_local_tk;
-        $cookie = 'pt_local_token=' . $pt_local_tk;
-        $referer = 'https://xui.ptlogin2.qq.com/';
-        $res = $this->curl($url, 0, $referer, $cookie);
-        if ($res && strpos($res, 'var_sso_uin_list=')) {
-            if (preg_match('/var_sso_uin_list=(.*?);ptui_getuins_CB/', $res, $match)) {
-                $arr = json_decode($match[1], true);
-                return $arr;
-            }
+        global $conf;
+        $url = 'http://'.$conf['server_ip'].':'.$conf['server_port'];
+        $post = json_encode(['function'=>'GetAllQQlist', 'token'=>$conf['server_key']]);
+        $res = $this->curl($url, $post);
+        $arr = json_decode($res, true);
+        if(isset($arr['code']) && $arr['code']==1){
+            return $arr['data'];
         }
         return false;
     }
 
     public function getClientKey($uin)
     {
-        $pt_local_tk = random(9, 1);
-        $url = 'https://localhost.ptlogin2.qq.com:4301/pt_get_st?clientuin=' . $uin . '&pt_local_tk=' . $pt_local_tk . '&callback=__jp0';
-        $cookie = 'pt_local_token=' . $pt_local_tk;
-        $referer = 'https://xui.ptlogin2.qq.com/';
-        $res = $this->curl($url, 0, $referer, $cookie, 1);
-        if ($res['code'] == 200 && strpos($res['body'], 'var_sso_get_st_uin=')) {
-            preg_match('/clientkey=(.*?);/', $res['header'], $match);
-            $clientkey = $match[1];
-            return $clientkey;
+        global $conf;
+        $url = 'http://'.$conf['server_ip'].':'.$conf['server_port'];
+        $post = json_encode(['function'=>'GetClientKey', 'token'=>$conf['server_key'], 'param'=>['p1'=>$uin]]);
+        $res = $this->curl($url, $post);
+        $arr = json_decode($res, true);
+        if(isset($arr['code']) && $arr['code']==1){
+            return $arr['data']['clientkey'];
         }
         $this->uinlost = true;
         return false;
@@ -53,22 +48,12 @@ class QQLogin
         $daid = $typeinfo[0];
         $aid = $typeinfo[1];
         $surl = $typeinfo[2];
-        $pt_local_tk = random(9, 1);
-        $url = 'https://ssl.ptlogin2.qq.com/jump?clientuin=' . $uin . '&keyindex=9&pt_aid=' . $aid . '&daid=' . $daid . '&u1=' . urlencode($surl) . '&pt_local_tk=' . $pt_local_tk . '&pt_3rd_aid=0&ptopt=1&style=40';
-        $cookie = 'pt_local_token=' . $pt_local_tk . '; clientuin=' . $uin . '; clientkey=' . $clientkey;
-        $referer = 'https://xui.ptlogin2.qq.com/';
-        $res = $this->curl($url, 0, $referer, $cookie);
-        if (preg_match("/ptui_qlogin_CB\('(.*?)', '(.*?)', '(.*?)'\)/", $res, $match)) {
-            $code = $match[1];
-            $jumpurl = $match[2];
-            $errmsg = $match[3];
-            if ($code == '0' && !empty($jumpurl)) {
-                return true;
-            }else{
-                $this->errmsg = $errmsg ? $errmsg : $res;
-            }
+        $url = 'https://ssl.ptlogin2.qq.com/jump?ptlang=2052&clientuin=' . $uin . '&clientkey='.$clientkey.'&u1=' . urlencode($surl) . '&source=panelstar&pt_aid=' . $aid . '&daid=' . $daid . '&pt_3rd_aid=0';
+        $res = $this->curl($url, 0, 0, 0, 1);
+        if ($res['code'] == 302 && !empty($res['redirect_url']) && strpos($res['redirect_url'], '//www.qq.com/')===false) {
+            return true;
         } else {
-            $this->errmsg = $res;
+            $this->errmsg = '快捷登录失败';
         }
         return false;
     }
@@ -90,32 +75,21 @@ class QQLogin
         $aid = $typeinfo[1];
         $surl = $typeinfo[2];
 
-        $pt_local_tk = random(9, 1);
-        $url = 'https://ssl.ptlogin2.qq.com/jump?clientuin=' . $uin . '&keyindex=9&pt_aid=' . $aid . '&daid=' . $daid . '&u1=' . urlencode($surl) . '&pt_local_tk=' . $pt_local_tk . '&pt_3rd_aid='.$pt_3rd_aid.'&ptopt=1&style=40';
-        $cookie = 'pt_local_token=' . $pt_local_tk . '; clientuin=' . $uin . '; clientkey=' . $clientkey;
-        $referer = 'https://xui.ptlogin2.qq.com/';
-        $res = $this->curl($url, 0, $referer, $cookie);
-        if (preg_match("/ptui_qlogin_CB\('(.*?)', '(.*?)', '(.*?)'\)/", $res, $match)) {
-            $code = $match[1];
-            $jumpurl = $match[2];
-            $errmsg = $match[3];
-            if ($code == '0' && !empty($jumpurl)) {
-                $res = $this->curl($jumpurl, 0, $referer, 0, 1);
-                $cookie = '';
-                preg_match_all('/Set-Cookie: (.*);/iU', $res['header'], $matchs);
-                foreach ($matchs[1] as $val) {
-                    if (substr($val, -1) == '=') continue;
-                    $cookie .= $val . '; ';
-                }
-                $cookie = substr($cookie, 0, -2);
-                return $cookie;
-            } else {
-                $this->uinlost = true;
-                $this->errmsg = $errmsg ? $errmsg : $res;
+        $url = 'https://ssl.ptlogin2.qq.com/jump?ptlang=2052&clientuin=' . $uin . '&clientkey='.$clientkey.'&u1=' . urlencode($surl) . '&source=panelstar&pt_aid=' . $aid . '&daid=' . $daid . '&pt_3rd_aid='.$pt_3rd_aid;
+        $res = $this->curl($url, 0, 0, 0, 1);
+        if ($res['code'] == 302 && !empty($res['redirect_url']) && strpos($res['redirect_url'], '//www.qq.com/')===false) {
+            $res = $this->curl($res['redirect_url'], 0, 0, 0, 1);
+            $cookie = '';
+            preg_match_all('/Set-Cookie: (.*);/iU', $res['header'], $matchs);
+            foreach ($matchs[1] as $val) {
+                if (substr($val, -1) == '=') continue;
+                $cookie .= $val . '; ';
             }
+            $cookie = substr($cookie, 0, -2);
+            return $cookie;
         } else {
             $this->uinlost = true;
-            $this->errmsg = $res;
+            $this->errmsg = '快捷登录失败';
         }
         return false;
     }
@@ -395,6 +369,9 @@ class QQLogin
             $ret['code'] = $httpCode;
             $ret['header'] = $headers;
             $ret['body'] = $body;
+            if($httpCode == 301 || $httpCode == 302){
+                $ret['redirect_url'] = curl_getinfo($ch, CURLINFO_REDIRECT_URL);
+            }
         }
         curl_close($ch);
         return $ret;

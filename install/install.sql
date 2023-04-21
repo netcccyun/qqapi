@@ -20,6 +20,9 @@ INSERT INTO `qqapi_config` VALUES ('mail_pwd', '');
 INSERT INTO `qqapi_config` VALUES ('sitename', 'QQ-API管理中心');
 INSERT INTO `qqapi_config` VALUES ('cache_time', '300');
 INSERT INTO `qqapi_config` VALUES ('cache_clean', '');
+INSERT INTO `qqapi_config` VALUES ('server_ip', '127.0.0.1');
+INSERT INTO `qqapi_config` VALUES ('server_port', '1111');
+INSERT INTO `qqapi_config` VALUES ('server_key', '');
 
 
 DROP TABLE IF EXISTS `qqapi_account`;
