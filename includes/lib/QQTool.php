@@ -181,4 +181,27 @@ class QQTool
         }
         return $result;
     }
+
+    //获取QQ昵称
+    public function getqqnick($uin)
+    {
+        $url = 'https://h5.qzone.qq.com/proxy/domain/r.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?get_nick=1&uins=' . $uin . '&g_tk=' . $this->gtk;
+        $data = get_curl($url, 0, 'https://user.qzone.qq.com/' . $uin, $this->cookie);
+        $data = str_replace(array('portraitCallBack(',')'),array('',''),$data);
+		$data = mb_convert_encoding($data, "UTF-8", "GBK");
+        $arr = jsonp_decode($data, true);
+        if (isset($arr[$uin])) {
+            $result = array("code" => 0, "nick" => $arr[$uin][6]);
+        } elseif (isset($arr['error'])) {
+            if($arr['error']['type'] == 'need login'){
+                $this->cookiezt = true;
+                $result = array("code" => -1, "subcode"=>101, "msg" => '获取QQ昵称失败！COOKIE已失效');
+            }else{
+                $result = array("code" => -1, "subcode"=>102, "msg" => '获取QQ昵称失败！'.$arr['error']['msg']);
+            }
+        } else {
+            $result = array("code" => -1, "subcode"=>102, "msg" => '获取QQ昵称失败！请稍候再试');
+        }
+        return $result;
+    }
 }

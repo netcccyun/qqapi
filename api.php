@@ -115,6 +115,12 @@ case 'getqqlevel': //获取QQ等级
 	$result = qqtool_call('vip', 'getqqlevel', [$uin]);
 	exit(json_encode($result));
 break;
+case 'getqqnick': //获取QQ昵称
+	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No key"}');
+	if($key !== $conf['apikey'])exit('{"code":-1,"msg":"密钥错误"}');
+	$result = qqtool_call('qzone', 'getqqnick', [$uin]);
+	exit(json_encode($result));
+break;
 default:
 	exit('{"code":-4,"msg":"No Act"}');
 break;
