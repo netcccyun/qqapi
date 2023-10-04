@@ -73,6 +73,7 @@
 | dongman        | 腾讯动漫       |
 | weishi         | 微视           |
 | qcloud         | 腾讯云         |
+| tenpay         | 财付通         |
 
 ## 获取clientkey接口
 

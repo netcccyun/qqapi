@@ -110,6 +110,9 @@ class QQLogin
             case 'ti':
                 return ['338', '809041606', 'https://ti.qq.com/friendship_auth/index.html'];
                 break;
+            case 'tenpay':
+                return ['120', '546000248', 'https://www.tenpay.com/v2/res/js/yui/build/login/ptlogin.shtml'];
+                break;
             case 'connect':
                 return ['383', '716027609', 'https://graph.qq.com/oauth2.0/login_jump'];
                 break;
