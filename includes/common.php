@@ -61,7 +61,7 @@ if(isset($_COOKIE["admin_token"]))
 }
 
 //QQ登录COOKIE类型
-$qqlogin_type = ['qzone'=>'QQ空间', 'qun'=>'QQ群', 'vip'=>'QQ会员', 'ti'=>'手机QQ', 'connect'=>'QQ互联'];
+$qqlogin_type = ['qzone'=>'QQ空间', 'qun'=>'QQ群', 'vip'=>'QQ会员', 'ti'=>'手机QQ', 'tenpay'=>'财付通', 'connect'=>'QQ互联'];
 
 //QQ互联登录COOKIE类型
 $qqlogin_type_3rd = ['video'=>'腾讯视频', 'music'=>'QQ音乐', 'wenwen'=>'腾讯问问', 'dongman'=>'腾讯动漫', 'weishi'=>'微视', 'qcloud'=>'腾讯云'];

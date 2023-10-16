@@ -83,6 +83,29 @@ case 'getclientkey': //获取clientkey
 		exit(json_encode(['code'=>-1, 'msg'=>'clientkey获取失败']));
 	}
 break;
+case 'getoauthcode': //获取QQ互联登录授权CODE
+	$uin = isset($_POST['uin'])?trim($_POST['uin']):null;
+	$client_id = isset($_POST['client_id'])?trim($_POST['client_id']):exit('{"code":-1,"msg":"No client_id"}');
+	$redirect_uri = isset($_POST['redirect_uri'])?trim($_POST['redirect_uri']):exit('{"code":-1,"msg":"No redirect_uri"}');
+	if($conf['cookie_open']!=1)exit('{"code":-1,"msg":"未开启获取COOKIE接口"}');
+	if($key !== $conf['cookie_key'])exit('{"code":-1,"msg":"密钥错误"}');
+	if(!empty($uin)){
+		$account = $DB->find('account', '*', ['uin'=>$uin]);
+		if(!$account) exit('{"code":-1,"msg":"QQ不存在"}');
+		if($account['status']!=1) exit('{"code":-1,"msg":"QQ状态不正常"}');
+	}else{
+		$row = $DB->getRow("SELECT * FROM qqapi_account WHERE status=1 ORDER BY rand() LIMIT 1");
+		if(!$row) exit('{"code":-1,"msg":"暂无可用的QQ"}');
+		$uin = $row['uin'];
+	}
+	$qqlogin = new \lib\QQLogin();
+	$oauthcode = $qqlogin->login3rdapi($uin, $client_id, $redirect_uri);
+	if($oauthcode!==false){
+		exit(json_encode(['code'=>0, 'uin'=>$uin, 'oauthcode'=>$oauthcode]));
+	}else{
+		exit(json_encode(['code'=>-1, 'msg'=>$qqlogin->errmsg]));
+	}
+break;
 case 'getshuoshuo': //获取说说列表
 	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No key"}');
 	$page = isset($_POST['page'])?$_POST['page']:1;

@@ -133,6 +133,15 @@ class QQLogin
         $client_id = $typeinfo[0];
         $redirect_uri = $typeinfo[1];
 
+        $code = $this->login3rdapi($uin, $client_id, $redirect_uri);
+        if ($code === false) return false;
+
+        return $this->login3rdByCode($type, $code);
+    }
+
+    //QQ互联快速登录操作
+    public function login3rdapi($uin, $client_id, $redirect_uri)
+    {
         $cookie = $this->login($uin, 'connect', $client_id);
         if ($cookie === false) return false;
 
@@ -144,7 +153,7 @@ class QQLogin
         if (preg_match("/Location: (.*?)\r\n/i", $res['header'], $match)) {
             parse_str(parse_url($match[1], PHP_URL_QUERY), $query_arr);
             if(isset($query_arr['code'])){
-                return $this->login3rdByCode($type, $query_arr['code']);
+                return $query_arr['code'];
             }elseif(isset($query_arr['error_description'])){
                 $this->errmsg = '获取回调code失败，'.$query_arr['error_description'];
             }else{
