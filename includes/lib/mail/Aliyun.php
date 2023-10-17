@@ -17,6 +17,7 @@ class Aliyun
 		ksort($parameters);
 		$canonicalizedQueryString = '';
 		foreach ($parameters as $key => $value) {
+			if($value === null) continue;
 			$canonicalizedQueryString .= '&' . $this->percentEncode($key) . '=' . $this->percentEncode($value);
 		}
 		$stringToSign = $method . '&%2F&' . $this->percentencode(substr($canonicalizedQueryString, 1));

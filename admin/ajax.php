@@ -17,14 +17,6 @@ case 'set':
 	}
 	exit('{"code":0,"msg":"succ"}');
 break;
-case 'iptype':
-	$result = [
-	['name'=>'0_X_FORWARDED_FOR', 'ip'=>real_ip(0), 'city'=>get_ip_city(real_ip(0))],
-	['name'=>'1_X_REAL_IP', 'ip'=>real_ip(1), 'city'=>get_ip_city(real_ip(1))],
-	['name'=>'2_REMOTE_ADDR', 'ip'=>real_ip(2), 'city'=>get_ip_city(real_ip(2))]
-	];
-	exit(json_encode($result));
-break;
 
 case 'getUinList':
 	$login = new \lib\QQLogin();
