@@ -4,6 +4,7 @@ if (substr(php_sapi_name(), 0, 3) != 'cli') {
 }
 @chdir(dirname(__FILE__));
 include("./includes/common.php");
+define('IS_CRON', true);
 
 $opentype = explode(',', $conf['opentype']);
 

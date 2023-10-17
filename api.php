@@ -1,5 +1,6 @@
 <?php
 include("./includes/common.php");
+define('IS_CRON', true);
 $act=isset($_GET['act'])?daddslashes($_GET['act']):null;
 
 @header('Content-Type: application/json; charset=UTF-8');
