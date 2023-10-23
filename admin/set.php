@@ -63,7 +63,7 @@ $opentype = explode(',', $conf['opentype']);
 	</div><hr/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">API接口密钥</label>
-	  <div class="col-sm-9"><div class="input-group"><input type="text" name="apikey" value="<?php echo $conf['apikey']; ?>" class="form-control" required/><span class="input-group-btn"><a href="javascript:generateKey('apikey');" title="重新生成" class="btn btn-default"><i class="fa fa-refresh"></i></a></span></div></div>
+	  <div class="col-sm-9"><div class="input-group"><input type="text" name="apikey" value="<?php echo $conf['apikey']; ?>" class="form-control" required/><span class="input-group-btn"><a href="javascript:generateKey('apikey');" title="重新生成" class="btn btn-default"><i class="glyphicon glyphicon-refresh"></i></a></span></div></div>
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">获取COOKIE接口</label>
@@ -71,7 +71,7 @@ $opentype = explode(',', $conf['opentype']);
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">获取COOKIE接口密钥</label>
-	  <div class="col-sm-9"><div class="input-group"><input type="text" name="cookie_key" value="<?php echo $conf['cookie_key']; ?>" class="form-control" required/><span class="input-group-btn"><a href="javascript:generateKey('cookie_key');" title="重新生成" class="btn btn-default"><i class="fa fa-refresh"></i></a></span></div></div>
+	  <div class="col-sm-9"><div class="input-group"><input type="text" name="cookie_key" value="<?php echo $conf['cookie_key']; ?>" class="form-control" required/><span class="input-group-btn"><a href="javascript:generateKey('cookie_key');" title="重新生成" class="btn btn-default"><i class="glyphicon glyphicon-refresh"></i></a></span></div></div>
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">调用方IP地址白名单</label>
@@ -93,6 +93,17 @@ $opentype = explode(',', $conf['opentype']);
 </div>
 </div>
 <?php
+}elseif($mod=='mailtest'){
+	$mail_name = $conf['mail_recv']?$conf['mail_recv']:$conf['mail_name'];
+	if(!empty($mail_name)){
+	$result=send_mail($mail_name,'邮件发送测试。','这是一封测试邮件！<br/><br/>来自：'.$siteurl);
+	if($result==1)
+		showmsg('邮件发送成功！',1);
+	else
+		showmsg('邮件发送失败！'.$result,3);
+	}
+	else
+		showmsg('您还未设置邮箱！',3);
 }elseif($mod=='notice'){
 ?>
 <div class="panel panel-primary">

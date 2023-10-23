@@ -108,39 +108,39 @@ case 'getoauthcode': //获取QQ互联登录授权CODE
 	}
 break;
 case 'getshuoshuo': //获取说说列表
-	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No key"}');
+	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No uin"}');
 	$page = isset($_POST['page'])?$_POST['page']:1;
 	if($key !== $conf['apikey'])exit('{"code":-1,"msg":"密钥错误"}');
 	$result = qqtool_call('qzone', 'getshuoshuo', [$uin, $page]);
 	exit(json_encode($result));
 break;
 case 'getrizhi': //获取日志列表
-	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No key"}');
+	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No uin"}');
 	$page = isset($_POST['page'])?$_POST['page']:1;
 	if($key !== $conf['apikey'])exit('{"code":-1,"msg":"密钥错误"}');
 	$result = qqtool_call('qzone', 'getrizhi', [$uin, $page]);
 	exit(json_encode($result));
 break;
 case 'getvisitcount': //获取空间人气
-	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No key"}');
+	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No uin"}');
 	if($key !== $conf['apikey'])exit('{"code":-1,"msg":"密钥错误"}');
 	$result = qqtool_call('qzone', 'getvisitcount', [$uin]);
 	exit(json_encode($result));
 break;
 case 'getprivilege': //获取已开通权益
-	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No key"}');
+	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No uin"}');
 	if($key !== $conf['apikey'])exit('{"code":-1,"msg":"密钥错误"}');
 	$result = qqtool_call('vip', 'getprivilege', [$uin]);
 	exit(json_encode($result));
 break;
 case 'getqqlevel': //获取QQ等级
-	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No key"}');
+	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No uin"}');
 	if($key !== $conf['apikey'])exit('{"code":-1,"msg":"密钥错误"}');
 	$result = qqtool_call('vip', 'getqqlevel', [$uin]);
 	exit(json_encode($result));
 break;
 case 'getqqnick': //获取QQ昵称
-	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No key"}');
+	$uin = isset($_POST['uin'])?trim($_POST['uin']):exit('{"code":-1,"msg":"No uin"}');
 	if($key !== $conf['apikey'])exit('{"code":-1,"msg":"密钥错误"}');
 	$result = qqtool_call('qzone', 'getqqnick', [$uin]);
 	exit(json_encode($result));

@@ -9,8 +9,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title><?php echo $title ?></title>
   <link href="//cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
-  <link href="//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
-  <script src="//cdn.staticfile.org/modernizr/2.8.3/modernizr.min.js"></script>
   <script src="//cdn.staticfile.org/jquery/2.1.4/jquery.min.js"></script>
   <script src="//cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <!--[if lt IE 9]>
@@ -46,7 +44,7 @@
             <a href="https://github.com/netcccyun/qqapi/blob/main/admin/apidoc.md" target="_blank"><span class="glyphicon glyphicon-book"></span> 接口文档</a>
           </li>
           <li class="<?php echo checkIfActive('set')?>">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cog"></i> 系统设置<b class="caret"></b></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span> 系统设置<b class="caret"></b></a>
             <ul class="dropdown-menu">
               <li><a href="./set.php?mod=cron">计划任务设置</a></li>
               <li><a href="./set.php?mod=app">基础参数设置</a></li>
