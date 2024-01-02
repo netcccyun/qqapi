@@ -1,5 +1,16 @@
 <?php
 @header('Content-Type: text/html; charset=UTF-8');
+
+$admin_cdnpublic = 1;
+if($admin_cdnpublic==1){
+	$cdnpublic = '//lib.baomitu.com/';
+}elseif($admin_cdnpublic==2){
+	$cdnpublic = 'https://cdn.bootcdn.net/ajax/libs/';
+}elseif($admin_cdnpublic==4){
+	$cdnpublic = '//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/';
+}else{
+	$cdnpublic = '//cdn.staticfile.org/';
+}
 ?>
 <!DOCTYPE html>
 <html lang="zh-cn">
@@ -8,12 +19,12 @@
   <meta name="renderer" content="webkit">
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title><?php echo $title ?></title>
-  <link href="//cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
-  <script src="//cdn.staticfile.org/jquery/2.1.4/jquery.min.js"></script>
-  <script src="//cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
+  <script src="<?php echo $cdnpublic?>jquery/2.1.4/jquery.min.js"></script>
+  <script src="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <!--[if lt IE 9]>
-    <script src="//cdn.staticfile.org/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <script src="<?php echo $cdnpublic?>html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="<?php echo $cdnpublic?>respond.js/1.4.2/respond.min.js"></script>
   <![endif]-->
 </head>
 <body>

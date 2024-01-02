@@ -225,7 +225,7 @@ $("select[name='mail_cloud']").change(function(){
 ?>
     </div>
   </div>
-<script src="//cdn.staticfile.org/layer/3.1.1/layer.min.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script>
 var items = $("select[default]");
 for (i = 0; i < items.length; i++) {

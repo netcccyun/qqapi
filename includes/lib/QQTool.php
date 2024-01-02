@@ -10,16 +10,16 @@ class QQTool
     private $skey;
     public $cookiezt = false;
 
-    public function __construct($uin, $cookie, $is_skey = false)
+    public function __construct($uin, $cookie)
     {
         $this->uin = $uin;
         $this->cookie = $cookie;
-        if ($is_skey) {
-            $this->skey = getSubstr($cookie, 'skey=', ';');
-            $this->gtk = getGTK($this->skey);
-        } else {
+        if (strpos($cookie, 'p_skey=')) {
             $pskey = getSubstr($cookie, 'p_skey=', ';');
             $this->gtk = getGTK($pskey);
+        } else {
+            $this->skey = getSubstr($cookie, 'skey=', ';');
+            $this->gtk = getGTK($this->skey);
         }
     }
 
@@ -201,6 +201,37 @@ class QQTool
             }
         } else {
             $result = array("code" => -1, "subcode"=>102, "msg" => '获取QQ昵称失败！请稍候再试');
+        }
+        return $result;
+    }
+
+    //ICP备案查询
+    public function icpquery($domain)
+    {
+        $uin = getSubstr($this->cookie, 'uin=', ';');
+        $uin = getUin($uin);
+        $url = 'https://console.cloud.tencent.com/cgi/capi?cmd=DescribeIcpDomainInfo&action=delegate&serviceType=ba&secure=1&version=3&dictId=2163&sts=1&t='.time().'123&uin='.$uin.'&ownerUin='.$uin.'&csrfCode=' . $this->gtk;
+        $post = '{"serviceType":"ba","regionId":1,"data":{"Version":"2020-07-20","RequestClient":"PC","Type":"DOMAIN","Value":"'.$domain.'"},"cmd":"DescribeIcpDomainInfo"}';
+        $data = get_curl($url, $post, 'https://console.cloud.tencent.com/beian/search', $this->cookie, 0, 0, 0, ['Content-Type: application/json; charset=UTF-8']);
+        $arr = json_decode($data, true);
+        if (isset($arr['code']) && $arr['code'] == 0) {
+            if($arr['data']['code'] == 0){
+                $resp = $arr['data']['data']['Response'];
+                if(!$resp['Empty'] && !empty($resp['Results'])){
+                    $result = array("code" => 0, "data" => $resp['Results'][0]);
+                }else{
+                    $result = array("code" => -1, "subcode"=>103, "msg" => '未查询到该域名备案信息');
+                }
+            }else{
+                $result = array("code" => -1, "subcode"=>102, "msg" => '备案查询失败！请稍候再试');
+            }
+        } elseif (isset($arr['code']) && $arr['code'] == 1000) {
+            $this->cookiezt = true;
+            $result = array("code" => -1, "subcode"=>101, "msg" => '备案查询失败！COOKIE已失效');
+        } elseif (isset($arr['msg'])) {
+            $result = array("code" => -1, "subcode"=>102, "msg" => '备案查询失败！' . $arr['msg']);
+        } else {
+            $result = array("code" => -1, "subcode"=>102, "msg" => '备案查询失败！请稍候再试');
         }
         return $result;
     }

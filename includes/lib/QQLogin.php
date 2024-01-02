@@ -336,6 +336,10 @@ class QQLogin
                 $cookie .= $val . '; ';
             }
             $cookie = substr($cookie, 0, -2);
+
+            $url = 'https://cloud.tencent.com/login/forward?s_url=https%3A%2F%2Fconsole.cloud.tencent.com%2F&fwd_flag=7&qqaccess=true';
+            $this->curl($url, 0, $referer, $cookie);
+
             return $cookie;
         } else {
             $this->errmsg = '登录腾讯云失败';

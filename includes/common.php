@@ -67,7 +67,7 @@ $qqlogin_type = ['qzone'=>'QQ空间', 'qun'=>'QQ群', 'vip'=>'QQ会员', 'ti'=>'
 $qqlogin_type_3rd = ['video'=>'腾讯视频', 'music'=>'QQ音乐', 'wenwen'=>'腾讯问问', 'dongman'=>'腾讯动漫', 'weishi'=>'微视', 'qcloud'=>'腾讯云'];
 
 //支持保活的COOKIE类型
-$cron_qqlogin_type = ['qzone'=>'QQ空间', 'vip'=>'QQ会员'];
+$cron_qqlogin_type = ['qzone'=>'QQ空间', 'vip'=>'QQ会员', 'qcloud'=>'腾讯云'];
 
 if (!file_exists(ROOT.'install/install.lock') && file_exists(ROOT.'install/index.php')) {
 	sysmsg('<h2>检测到无 install.lock 文件</h2><ul><li><font size="4">如果您尚未安装本程序，请<a href="/install/">前往安装</a></font></li><li><font size="4">如果您已经安装本程序，请手动放置一个空的 install.lock 文件到 /install 文件夹下，<b>为了您站点安全，在您完成它之前我们不会工作。</b></font></li></ul><br/><h4>为什么必须建立 install.lock 文件？</h4>它是安装保护文件，如果检测不到它，就会认为站点还没安装，此时任何人都可以安装/重装你的网站。<br/><br/>');exit;

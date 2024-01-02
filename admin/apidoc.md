@@ -10,6 +10,7 @@
   - [查询已开通权益](#查询已开通权益)
   - [查询QQ等级信息](#查询qq等级信息)
   - [查询QQ昵称](#查询qq昵称)
+  - [ICP备案查询](#ICP备案查询)
 
 
 ## 获取COOKIE接口
@@ -441,3 +442,50 @@
 | code   | int    | 0 是成功，其他是失败 |
 | msg    | string | 失败原因             |
 | nick   | string | QQ昵称               |
+
+## ICP备案查询
+
+请求URL：
+
+> /api.php?act=icpquery
+
+请求方式：POST
+
+请求参数：
+
+| 参数名 | 必填 | 类型   | 描述        |
+| ------ | ---- | ------ | ----------- |
+| key    | 是   | string | API接口密钥 |
+| domain | 是   | string | 域名        |
+
+返回示例：
+
+```
+{
+    "code": 0,
+    "data": {
+        "CompanyName": "深圳市腾讯计算机系统有限公司",
+        "CompanyType": "企业",
+        "DomainIcpNum": "粤B2-20090059-5",
+        "WebsiteName": "-",
+        "WebsiteHomeUrl": "-",
+        "AuditTime": "2022-09-06",
+        "Domain": "qq.com",
+        "InTencent": true
+    },
+    "from": "online"
+}
+```
+
+返回参数说明：
+
+| 参数名            | 类型   | 描述                 |
+| ----------------- | ------ | -------------------- |
+| code              | int    | 0 是成功，其他是失败 |
+| msg               | string | 失败原因             |
+| data.Domain       | string | 域名                 |
+| data.DomainIcpNum | string | 备案号               |
+| data.CompanyName  | string | 主办单位名称         |
+| data.CompanyType  | string | 主办单位性质         |
+| data.AuditTime    | string | 审核日期             |
+| data.InTencent    | bool   | 是否接入腾讯云       |

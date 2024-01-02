@@ -145,6 +145,12 @@ case 'getqqnick': //获取QQ昵称
 	$result = qqtool_call('qzone', 'getqqnick', [$uin]);
 	exit(json_encode($result));
 break;
+case 'icpquery': //ICP备案查询
+	$domain = isset($_POST['domain'])?trim($_POST['domain']):exit('{"code":-1,"msg":"域名不能为空"}');
+	if($key !== $conf['apikey'])exit('{"code":-1,"msg":"密钥错误"}');
+	$result = qqtool_call('qcloud', 'icpquery', [$domain]);
+	exit(json_encode($result));
+break;
 default:
 	exit('{"code":-4,"msg":"No Act"}');
 break;

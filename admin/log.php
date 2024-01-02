@@ -79,7 +79,7 @@ echo'</ul>';
 ?>
     </div>
   </div>
-<script src="//cdn.staticfile.org/layer/3.1.1/layer.min.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script>
 function showreason(content){
 	layer.alert(content, {title:'查看失败原因', shadeClose: true})

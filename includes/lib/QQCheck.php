@@ -14,6 +14,9 @@ class QQCheck
             case 'vip':
                 return self::checkVipCookie($uin, $cookie);
                 break;
+            case 'qcloud':
+                return self::checkQcloudCookie($uin, $cookie);
+                break;
             default:
                 return false;
                 break;
@@ -47,6 +50,22 @@ class QQCheck
             return false;
         } else {
             return true;
+        }
+    }
+
+    private static function checkQcloudCookie($uin, $cookie)
+    {
+        $uin = getSubstr($cookie, 'uin=', ';');
+        $skey = getSubstr($cookie, 'skey=', ';');
+        if (!$uin || !$skey) return false;
+        $gtk = getGTK($skey);
+        $url = 'https://console.cloud.tencent.com/cgi/com?action=getServiceAccount&t='.time().'000&uin='.getUin($uin).'&ownerUin=0&csrfCode='.$gtk.'&regionId=33';
+        $data = get_curl($url, 0, 'https://console.cloud.tencent.com/', $cookie);
+        $arr = json_decode($data, true);
+        if (isset($arr['code']) && $arr['code'] == 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 }

@@ -1,5 +1,5 @@
 <?php
-function get_curl($url, $post=0, $referer=0, $cookie=0, $header=0, $ua=0, $nobaody=0)
+function get_curl($url, $post=0, $referer=0, $cookie=0, $header=0, $ua=0, $nobaody=0, $addheader=0)
 {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
@@ -9,6 +9,9 @@ function get_curl($url, $post=0, $referer=0, $cookie=0, $header=0, $ua=0, $nobao
 	$httpheader[] = "Accept-Encoding: gzip,deflate,sdch";
 	$httpheader[] = "Accept-Language: zh-CN,zh;q=0.8";
 	$httpheader[] = "Connection: close";
+	if($addheader){
+		$httpheader = array_merge($httpheader, $addheader);
+	}
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $httpheader);
 	if ($post) {
 		curl_setopt($ch, CURLOPT_POST, 1);
@@ -326,6 +329,12 @@ function getGTK2($skey){
 	}
 	$md5str = md5(implode($hash) . $md5key);
 	return $md5str;
+}
+
+function getUin($uin){
+	$uin = ltrim($uin, 'o');
+	$uin = ltrim($uin, '0');
+	return $uin;
 }
 
 function jsonp_decode($jsonp, $assoc = false)
