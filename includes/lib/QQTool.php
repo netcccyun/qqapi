@@ -218,14 +218,14 @@ class QQTool
             if($arr['data']['code'] == 0){
                 $resp = $arr['data']['data']['Response'];
                 if(!$resp['Empty'] && !empty($resp['Results'])){
-                    $result = array("code" => 0, "data" => $resp['Results'][0]);
+                    $result = array("code" => 0, "exists" => true, "data" => $resp['Results'][0]);
                 }else{
-                    $result = array("code" => -1, "subcode"=>103, "msg" => '未查询到该域名备案信息');
+                    $result = array("code" => 0, "exists" => false, "msg" => '未查询到该域名备案信息');
                 }
             }else{
                 $result = array("code" => -1, "subcode"=>102, "msg" => '备案查询失败！请稍候再试');
             }
-        } elseif (isset($arr['code']) && $arr['code'] == 1000) {
+        } elseif (isset($arr['code']) && $arr['code'] == 50) {
             $this->cookiezt = true;
             $result = array("code" => -1, "subcode"=>101, "msg" => '备案查询失败！COOKIE已失效');
         } elseif (isset($arr['msg'])) {
