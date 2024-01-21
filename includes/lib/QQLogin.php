@@ -325,29 +325,47 @@ class QQLogin
 
     private function loginQcloud($code)
     {
-        $url = 'https://cloud.tencent.com/login/qqAccessCallback?s_url=https%3A%2F%2Fconsole.cloud.tencent.com%2F&fwd_flag=7&code='.$code.'&state=state';
-        $referer = 'https://graph.qq.com/';
-        $res = $this->curl($url, 0, $referer, 0, 1);
+        $state = random(12);
+        $cookie = 'qcmainCSRFToken='.$state;
+        $url = 'https://cloud.tencent.com/login/qqAccessCallback?s_url=https%3A%2F%2Fcloud.tencent.com%2Flogin%2Fcallback%3Flogin_type%3Dqq%26s_url%3Dhttps%253A%252F%252Fconsole.cloud.tencent.com%252F&passthruCallback=1&fwd_flag=7&code='.$code.'&state='.$state;
+        $referer = 'https://graph.qq.com/oauth2.0/show';
+        $res = $this->curl($url, 0, $referer, $cookie, 1);
         if ($res['code'] == 302) {
-            $cookie = '';
-            preg_match_all('/set-cookie: (.*);/iU', $res['header'], $matchs);
-            foreach ($matchs[1] as $val) {
-                if (substr($val, -1) == '=') continue;
-                $cookie .= $val . '; ';
+            $res = $this->curl($res['redirect_url'], 0, $referer, $cookie, 1);
+            if ($res['code'] == 302) {
+                $cookie = '';
+                preg_match_all('/set-cookie: (.*);/iU', $res['header'], $matchs);
+                foreach ($matchs[1] as $val) {
+                    if (substr($val, -1) == '=') continue;
+                    $cookie .= $val . '; ';
+                }
+                $uin = getSubstr($cookie, 'uin=', ';');
+                $skey = getSubstr($cookie, 'skey=', ';');
+                $cookie = substr($cookie, 0, -2);
+                if(!$uin || !$skey){
+                    $this->errmsg = '登录腾讯云失败，获取cookie失败';
+                    return false;
+                }
+
+                $this->curl($res['redirect_url'], 0, $referer, $cookie);
+
+                $gtk = getGTK($skey);
+                $post = '{"fwdFlag":7,"sUrl":"https://console.cloud.tencent.com/"}';
+                $res = $this->curl('https://cloud.tencent.com/auth-api/forward/forward?uin='.getUin($uin).'&ownerUin=&csrfCode='.$gtk.'&t='.time().'123', $post, $res['redirect_url'], $cookie, 0, 1);
+                $arr = json_decode($res, true);
+                if(isset($arr['success']) && $arr['success']==1){
+                    return $cookie;
+                }else{
+                    $this->errmsg = '登录腾讯云失败，'.$arr['message'];
+                }
             }
-            $cookie = substr($cookie, 0, -2);
-
-            $url = 'https://cloud.tencent.com/login/forward?s_url=https%3A%2F%2Fconsole.cloud.tencent.com%2F&fwd_flag=7&qqaccess=true';
-            $this->curl($url, 0, $referer, $cookie);
-
-            return $cookie;
         } else {
             $this->errmsg = '登录腾讯云失败';
         }
         return false;
     }
 
-    private function curl($url, $post = 0, $referer = 0, $cookie = 0, $header = 0)
+    private function curl($url, $post = 0, $referer = 0, $cookie = 0, $header = 0, $json = 0)
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -357,6 +375,9 @@ class QQLogin
         $httpheader[] = "Accept-Encoding: gzip,deflate,sdch";
         $httpheader[] = "Accept-Language: zh-CN,zh;q=0.8";
         $httpheader[] = "Connection: close";
+        if ($json) {
+            $httpheader[] = "Content-Type: application/json; charset=UTF-8";
+        }
         curl_setopt($ch, CURLOPT_HTTPHEADER, $httpheader);
         if ($post) {
             curl_setopt($ch, CURLOPT_POST, 1);
