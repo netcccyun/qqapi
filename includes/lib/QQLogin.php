@@ -12,9 +12,10 @@ class QQLogin
     public function uinList()
     {
         global $conf;
+        $type = $conf['qq_version'] == '1' ? 'nt' : 'qq';
         $url = 'http://'.$conf['server_ip'].':'.$conf['server_port'];
-        $post = json_encode(['function'=>'GetAllQQlist', 'token'=>$conf['server_key']]);
-        $res = $this->curl($url, $post);
+        $post = json_encode(['function'=>'GetAllQQlist', 'token'=>$conf['server_key'], 'type'=>$type]);
+        $res = $this->curl($url, $post, 0, 0, 0, 1);
         $arr = json_decode($res, true);
         if(isset($arr['code']) && $arr['code']==1){
             return $arr['data'];
@@ -26,8 +27,9 @@ class QQLogin
     {
         global $conf;
         $url = 'http://'.$conf['server_ip'].':'.$conf['server_port'];
-        $post = json_encode(['function'=>'GetClientKey', 'token'=>$conf['server_key'], 'param'=>['p1'=>$uin]]);
-        $res = $this->curl($url, $post);
+        $type = $conf['qq_version'] == '1' ? 'nt' : 'qq';
+        $post = json_encode(['function'=>'GetClientKey', 'token'=>$conf['server_key'], 'param'=>['p1'=>$uin], 'type'=>$type]);
+        $res = $this->curl($url, $post, 0, 0, 0, 1);
         $arr = json_decode($res, true);
         if(isset($arr['code']) && $arr['code']==1){
             return $arr['data']['clientkey'];
@@ -39,6 +41,7 @@ class QQLogin
     //判断QQ是否已上线
     public function checkLogin($uin)
     {
+        global $conf;
         $clientkey = $this->getClientKey($uin);
         if ($clientkey === false) {
             $this->errmsg = 'clientkey获取失败';
@@ -49,6 +52,7 @@ class QQLogin
         $aid = $typeinfo[1];
         $surl = $typeinfo[2];
         $url = 'https://ssl.ptlogin2.qq.com/jump?ptlang=2052&clientuin=' . $uin . '&clientkey='.$clientkey.'&u1=' . urlencode($surl) . '&source=panelstar&pt_aid=' . $aid . '&daid=' . $daid . '&pt_3rd_aid=0';
+        if($conf['qq_version'] == '1') $url .= '&keyindex=19';
         $res = $this->curl($url, 0, 0, 0, 1);
         if ($res['code'] == 302 && !empty($res['redirect_url']) && strpos($res['redirect_url'], '//www.qq.com/')===false) {
             return true;
@@ -61,6 +65,7 @@ class QQLogin
     //快速登录操作
     public function login($uin, $type, $pt_3rd_aid = '0')
     {
+        global $conf;
         $clientkey = $this->getClientKey($uin);
         if ($clientkey === false) {
             $this->errmsg = 'clientkey获取失败';
@@ -76,6 +81,7 @@ class QQLogin
         $surl = $typeinfo[2];
 
         $url = 'https://ssl.ptlogin2.qq.com/jump?ptlang=2052&clientuin=' . $uin . '&clientkey='.$clientkey.'&u1=' . urlencode($surl) . '&source=panelstar&pt_aid=' . $aid . '&daid=' . $daid . '&pt_3rd_aid='.$pt_3rd_aid;
+        if($conf['qq_version'] == '1') $url .= '&keyindex=19';
         $res = $this->curl($url, 0, 0, 0, 1);
         if ($res['code'] == 302 && !empty($res['redirect_url']) && strpos($res['redirect_url'], '//www.qq.com/')===false) {
             $res = $this->curl($res['redirect_url'], 0, 0, 0, 1);
@@ -346,14 +352,25 @@ class QQLogin
                     $this->errmsg = '登录腾讯云失败，获取cookie失败';
                     return false;
                 }
+                $uin = getUin($uin);
 
                 $this->curl($res['redirect_url'], 0, $referer, $cookie);
 
                 $gtk = getGTK($skey);
                 $post = '{"fwdFlag":7,"sUrl":"https://console.cloud.tencent.com/"}';
-                $res = $this->curl('https://cloud.tencent.com/auth-api/forward/forward?uin='.getUin($uin).'&ownerUin=&csrfCode='.$gtk.'&t='.time().'123', $post, $res['redirect_url'], $cookie, 0, 1);
+                $res = $this->curl('https://cloud.tencent.com/auth-api/forward/forward?uin='.$uin.'&ownerUin=&csrfCode='.$gtk.'&t='.time().'123', $post, $res['redirect_url'], $cookie, 0, 1);
                 $arr = json_decode($res, true);
                 if(isset($arr['success']) && $arr['success']==1){
+                    if(isset($arr['data']['needVerify']) && $arr['data']['needVerify'] == true){
+                        $post = '{"authType":0,"ownerUin":'.$uin.',"code":"","rmDevice":0}';
+                        $res = $this->curl('https://cloud.tencent.com/auth-api/login/verify?uin='.$uin.'&ownerUin=&csrfCode='.$gtk.'&t='.time().'123', $post, $res['redirect_url'], $cookie, 0, 1);
+                        $arr = json_decode($res, true);
+                        if(isset($arr['success']) && $arr['success']==1){
+                        }else{
+                            $this->errmsg = '登录腾讯云失败，'.$arr['message'];
+                            return false;
+                        }
+                    }
                     return $cookie;
                 }else{
                     $this->errmsg = '登录腾讯云失败，'.$arr['message'];

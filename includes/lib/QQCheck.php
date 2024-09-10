@@ -17,6 +17,9 @@ class QQCheck
             case 'qcloud':
                 return self::checkQcloudCookie($uin, $cookie);
                 break;
+            case 'music':
+                return self::checkMusicCookie($uin, $cookie);
+                break;
             default:
                 return false;
                 break;
@@ -63,6 +66,29 @@ class QQCheck
         $data = get_curl($url, 0, 'https://console.cloud.tencent.com/', $cookie);
         $arr = json_decode($data, true);
         if (isset($arr['code']) && $arr['code'] == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static function checkMusicCookie($uin, $cookie)
+    {
+        $uin = getSubstr($cookie, '; uin=', ';');
+        $qqmusic_key = getSubstr($cookie, 'qqmusic_key=', ';');
+        if (!$uin || !$qqmusic_key) return false;
+        $uin = getUin($uin);
+        $gtk = getGTK($qqmusic_key);
+        $url = 'https://u6.y.qq.com/cgi-bin/musicu.fcg';
+        $param = [
+            'comm' => ['cv'=>0,'ct'=>24,'format'=>'json','inCharset'=>'utf-8','outCharset'=>'utf-8','notice'=>0,'platform'=>'yqq','needNewCode'=>1,'uin'=>$uin,'g_tk'=>$gtk],
+            'req_0' => ['module'=>'music.paycenterapi.LoginStateVerificationApi','method'=>'GetChargeAccount','param'=>['appid'=>'mlive']],
+        ];
+        $post = json_encode($param);
+        $data = get_curl($url, $post, 'https://y.qq.com/', $cookie, 0, 0, 0, ['Content-Type: application/json']);
+        $arr = json_decode($data, true);
+        $arr = $arr['req_0'];
+        if(isset($arr['code']) && $arr['code']==0){
             return true;
         } else {
             return false;

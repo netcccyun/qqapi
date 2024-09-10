@@ -60,6 +60,10 @@ $opentype = explode(',', $conf['opentype']);
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">登录服务器密钥</label>
 	  <div class="col-sm-9"><input type="text" name="server_key" value="<?php echo $conf['server_key']; ?>" class="form-control"/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">登录服务器QQ版本</label>
+	  <div class="col-sm-9"><select class="form-control" name="qq_version" default="<?php echo $conf['qq_version']?>"><option value="0">QQ 经典版</option><option value="1">QQ NT版</option></select></div>
 	</div><hr/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">API接口密钥</label>

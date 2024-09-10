@@ -151,6 +151,14 @@ case 'icpquery': //ICP备案查询
 	$result = qqtool_call('qcloud', 'icpquery', [$domain]);
 	exit(json_encode($result));
 break;
+case 'getmusic': //QQ音乐查询
+	$id = isset($_POST['id'])?trim($_POST['id']):null;
+	$mid = isset($_POST['mid'])?trim($_POST['mid']):null;
+	if(!$id && !$mid) exit('{"code":-1,"msg":"ID不能为空"}');
+	if($key !== $conf['apikey'])exit('{"code":-1,"msg":"密钥错误"}');
+	$result = qqtool_call('music', 'getmusic', [$id, $mid]);
+	exit(json_encode($result));
+break;
 default:
 	exit('{"code":-4,"msg":"No Act"}');
 break;

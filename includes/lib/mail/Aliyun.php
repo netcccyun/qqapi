@@ -27,11 +27,9 @@ class Aliyun
 	}
 	private function percentEncode($str)
 	{
-		$res = urlencode($str);
-		$res = preg_replace('/\+/', '%20', $res);
-		$res = preg_replace('/\*/', '%2A', $res);
-		$res = preg_replace('/%7E/', '~', $res);
-		return $res;
+		$search = ['+', '*', '%7E'];
+		$replace = ['%20', '%2A', '~'];
+		return str_replace($search, $replace, urlencode($str));
 	}
 	public function send($to, $sub, $msg, $from, $from_name)
 	{

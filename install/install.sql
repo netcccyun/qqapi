@@ -5,6 +5,7 @@ CREATE TABLE `qqapi_config` (
   PRIMARY KEY  (`k`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `qqapi_config` VALUES ('version', '1002');
 INSERT INTO `qqapi_config` VALUES ('admin_user', 'admin');
 INSERT INTO `qqapi_config` VALUES ('admin_pwd', '123456');
 INSERT INTO `qqapi_config` VALUES ('cookie_open', '0');
@@ -40,7 +41,7 @@ CREATE TABLE `qqapi_cookie` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `aid` int(11) unsigned NOT NULL,
   `type` varchar(10) NOT NULL,
-  `content` varchar(200) NOT NULL,
+  `content` text NOT NULL,
   `addtime` datetime NOT NULL,
   `usetime` datetime DEFAULT NULL,
   `checktime` datetime DEFAULT NULL,

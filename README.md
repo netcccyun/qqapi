@@ -13,7 +13,7 @@ QQ-API是一款php开发的QQ相关API接口管理系统。本程序必须搭建
 
 - 部署环境要求`PHP` >= 7.1、`MySQL` >= 5.5
 - 上传后直接访问，按照提示安装，后台默认账号密码：admin/123456
-- 在服务器登录电脑QQ，启动/admin/qqserver/qqserver.exe，配置好端口和密钥
+- 在服务器登录电脑QQ，在 /admin/qqserver/.env 配置好端口和密钥，启动 qqserver.exe
 - 在系统参数设置，配置登录服务器的IP、端口和密钥
 - 添加QQ、添加COOKIE检测定时任务
 

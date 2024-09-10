@@ -38,7 +38,7 @@ $offset=$pagesize*($page - 1);
 $rs=$DB->query("SELECT * FROM qqapi_log WHERE{$sql} order by id desc limit $offset,$pagesize");
 while($res = $rs->fetch())
 {
-echo '<tr><td><b>'.$res['id'].'</b></td><td>'.$res['action'].'</td><td>'.$res['uin'].'</td><td>'.getLoginTypeName($res['type']).'</td><td>'.$res['time'].'</td><td>'.($res['status']==1?'<font color="green">成功</font>':'<a href="javascript:showreason(\''.$res['reason'].'\')"><font color="red">失败</font></a>').'</td></tr>';
+echo '<tr><td><b>'.$res['id'].'</b></td><td>'.$res['action'].'</td><td>'.$res['uin'].'</td><td>'.getLoginTypeName($res['type']).'</td><td>'.$res['time'].'</td><td>'.($res['status']==1?'<font color="green">成功</font>':'<a href="javascript:showreason(\''.addslashes($res['reason']).'\')"><font color="red">失败</font></a>').'</td></tr>';
 }
 ?>
           </tbody>

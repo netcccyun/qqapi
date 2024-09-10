@@ -11,6 +11,7 @@
   - [查询QQ等级信息](#查询qq等级信息)
   - [查询QQ昵称](#查询qq昵称)
   - [ICP备案查询](#ICP备案查询)
+  - [QQ音乐下载链接解析](#QQ音乐下载链接解析)
 
 
 ## 获取COOKIE接口
@@ -489,3 +490,76 @@
 | data.CompanyType  | string | 主办单位性质         |
 | data.AuditTime    | string | 审核日期             |
 | data.InTencent    | bool   | 是否接入腾讯云       |
+
+## QQ音乐下载链接解析
+
+*如需解析高品质音乐，需开通绿钻豪华版*
+
+请求URL：
+
+> /api.php?act=getmusic
+
+请求方式：POST
+
+请求参数：
+
+| 参数名 | 必填 | 类型   | 描述        |
+| ------ | ---- | ------ | ----------- |
+| key    | 是   | string | API接口密钥 |
+| id     | 否   | int    | 音乐id      |
+| mid    | 否   | string | 音乐mid     |
+
+返回示例：
+
+```
+{
+    "code": 0,
+    "data": {
+        "id": 107192078,
+        "mid": "003OUlho2HcRHC",
+        "title": "告白气球",
+        "subtitle": "",
+        "album": "周杰伦的床边故事",
+        "author": "周杰伦",
+        "urls": [
+            {
+                "type": "flac",
+                "url": "http://ws.stream.qqmusic.qq.com/...",
+                "size": 47089150
+            },
+            {
+                "type": "320mp3",
+                "url": "http://ws.stream.qqmusic.qq.com/...",
+                "size": 8626883
+            },
+            {
+                "type": "192aac",
+                "url": "http://ws.stream.qqmusic.qq.com/...",
+                "size": 5215383
+            },
+            {
+                "type": "128mp3",
+                "url": "http://ws.stream.qqmusic.qq.com/...",
+                "size": 3450877
+            }
+        ]
+    },
+    "from": "online"
+}
+```
+
+返回参数说明：
+
+| 参数名           | 类型   | 描述                                  |
+| ---------------- | ------ | ------------------------------------- |
+| code             | int    | 0 是成功，其他是失败                  |
+| msg              | string | 失败原因                              |
+| data.id          | int    | 音乐id                                |
+| data.mid         | string | 音乐mid                               |
+| data.title       | string | 音乐名称                              |
+| data.album       | string | 专辑名称                              |
+| data.author      | string | 作者名称                              |
+| data.urls        | array  | 下载链接列表（音质由高到低排序）      |
+| data.urls[].type | string | 音质类型（flac/320mp3/192aac/128mp3） |
+| data.urls[].url  | string | 下载链接                              |
+| data.urls[].size | int    | 文件大小                              |

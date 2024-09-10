@@ -187,7 +187,6 @@ class QQTool
     {
         $url = 'https://h5.qzone.qq.com/proxy/domain/r.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?get_nick=1&uins=' . $uin . '&g_tk=' . $this->gtk;
         $data = get_curl($url, 0, 'https://user.qzone.qq.com/' . $uin, $this->cookie);
-        $data = str_replace(array('portraitCallBack(',')'),array('',''),$data);
 		$data = mb_convert_encoding($data, "UTF-8", "GBK");
         $arr = jsonp_decode($data, true);
         if (isset($arr[$uin])) {
@@ -234,5 +233,92 @@ class QQTool
             $result = array("code" => -1, "subcode"=>102, "msg" => '备案查询失败！请稍候再试');
         }
         return $result;
+    }
+
+    public function getmusic($id, $mid){
+        $qqmusic_key = getSubstr($this->cookie, 'qqmusic_key=', ';');
+        $this->gtk = getGTK($qqmusic_key);
+        if(!empty($id)){
+            $param = ['song_id'=>$id, 'song_type'=>0];
+        }else{
+            $param = ['song_mid'=>$mid, 'song_type'=>0];
+        }
+        $url = 'https://u6.y.qq.com/cgi-bin/musicu.fcg';
+        $param = [
+            'comm' => ['cv'=>0,'ct'=>24,'format'=>'json','inCharset'=>'utf-8','outCharset'=>'utf-8','notice'=>0,'platform'=>'yqq','needNewCode'=>1,'uin'=>$this->uin,'g_tk'=>$this->gtk],
+            'req_0' => ['module'=>'music.paycenterapi.LoginStateVerificationApi','method'=>'GetChargeAccount','param'=>['appid'=>'mlive']],
+            'req_1' => ['module'=>'music.pf_song_detail_svr','method'=>'get_song_detail','param'=>$param],
+        ];
+        $post = json_encode($param);
+        $data = get_curl($url, $post, 'https://y.qq.com/', $this->cookie, 0, 0, 0, ['Content-Type: application/json']);
+        $arr = json_decode($data, true);
+        if(isset($arr['req_0']['code']) && $arr['req_0']['code'] == 0){
+            $arr = $arr['req_1'];
+            if(isset($arr['code']) && $arr['code'] == 0){
+                $arr = $arr['data']['track_info'];
+                $singers = [];
+                foreach ($arr['singer'] as $singer) {
+                    $singers[] = $singer['title'];
+                }
+                $info = [
+                    'id' => $arr['id'],
+                    'mid' => $arr['mid'],
+                    'title' => $arr['title'],
+                    'subtitle' => $arr['subtitle'],
+                    'album' => $arr['album']['title'],
+                    'author' => implode(',', $singers),
+                ];
+                $urls = $this->get_music_url($arr['mid'], $arr['type'], $arr['file']);
+                if($urls){
+                    $info['urls'] = $urls;
+                    $result = array("code" => 0, "data" => $info);
+                }else{
+                    $result = array("code" => -1, "subcode"=>102, "msg" => '获取音乐下载链接失败，可能需要VIP身份');
+                }
+            }else{
+                $result = array("code" => -1, "subcode"=>102, "msg" => '获取音乐信息失败！请稍候再试');
+            }
+        }else{
+            $this->cookiezt = true;
+            $result = array("code" => -1, "subcode"=>101, "msg" => '获取音乐信息失败！COOKIE已失效');
+        }
+        return $result;
+    }
+
+    private function get_music_url($mid, $type, $file){
+        $type_list = [
+            ['flac', 999, 'F000', '.flac'],
+            ['320mp3', 320, 'M800', '.mp3'],
+            ['192aac', 192, 'C600', '.m4a'],
+            ['128mp3', 128, 'M500', '.mp3'],
+        ];
+        $guid=(string)rand(111111111,999999999);
+        $url = 'https://u6.y.qq.com/cgi-bin/musicu.fcg';
+        $param = [
+            'comm' => ['cv'=>0,'ct'=>24,'format'=>'json','inCharset'=>'utf-8','outCharset'=>'utf-8','notice'=>0,'platform'=>'yqq','needNewCode'=>1,'uin'=>$this->uin,'g_tk'=>$this->gtk],
+            'req_0' => ['module'=>'vkey.GetVkeyServer','method'=>'CgiGetVkey','param'=>['checklimit'=>0,'ctx'=>1,'downloadfrom'=>0,'guid'=>$guid,'songmid'=>[],'filename'=>[],'songtype'=>[],'uin'=>$this->uin,'loginflag'=>1,'platform'=>'20']],
+        ];
+        foreach($type_list as $row){
+            $param['req_0']['param']['songmid'][] = $mid;
+            $param['req_0']['param']['filename'][] = $row[2].$file['media_mid'].$row[3];
+            $param['req_0']['param']['songtype'][] = $type;
+        }
+        $post = json_encode($param);
+        $data = get_curl($url, $post, 'https://y.qq.com/', $this->cookie, 0, 0, 0, ['Content-Type: application/json']);
+        $arr = json_decode($data, true);
+        $arr = $arr['req_0'];
+        if(isset($arr['code']) && $arr['code']==0){
+            $sip = $arr['data']['sip'][0];
+            if(!$sip) $sip = 'http://ws.stream.qqmusic.qq.com/';
+            $url_list = [];
+            foreach($type_list as $index => $row){
+                if(!empty($arr['data']['midurlinfo'][$index]['purl'])){
+                    $url_list[] = ['type'=>$row[0], 'url'=>$sip.$arr['data']['midurlinfo'][$index]['purl'], 'size'=>$file['size_'.$row[0]]];
+                }
+            }
+            if(empty($url_list)) return false;
+            return $url_list;
+        }
+        return false;
     }
 }

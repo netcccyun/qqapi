@@ -266,11 +266,11 @@ function send_mail($to, $sub, $msg) {
 	global $conf;
 	if($conf['mail_cloud']==1){
 		$mail = new \lib\mail\Sendcloud($conf['mail_apiuser'], $conf['mail_apikey']);
-		return $mail->send($to, $sub, $msg, $conf['mail_name'], $conf['sitename']);
+		return $mail->send($to, $sub, $msg, $conf['mail_name2'], $conf['sitename']);
 	}elseif($conf['mail_cloud']==2){
 		try{
 			$mail = new \lib\mail\Aliyun($conf['mail_apiuser'], $conf['mail_apikey']);
-			return $mail->send($to, $sub, $msg, $conf['mail_name'], $conf['sitename']);
+			return $mail->send($to, $sub, $msg, $conf['mail_name2'], $conf['sitename']);
 		} catch (Exception $e) {
 			return $e->getMessage();
 		}
@@ -426,4 +426,19 @@ function get_qqnick($uin){
 		$row=json_decode($data,true);;
 		return $row[$uin][6];
 	}
+}
+
+function db_update(){
+	global $DB;
+	$count = 0;
+	$sqls=file_get_contents(ROOT.'install/update.sql');
+	$sqls=explode(';', $sqls);
+	foreach ($sqls as $value) {
+		$value=trim($value);
+		if(empty($value))continue;
+		if($DB->exec($value)!==false){
+			$count++;
+		}
+	}
+	return $count;
 }
